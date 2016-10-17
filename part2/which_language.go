@@ -3,129 +3,81 @@ package main
 
 //How we import libraries
 import (
-  "fmt"       // Used for Printing
-  "os"        // Used for opening/writing to files
-  "bufio"
-  "io/ioutil"
-  //"strconv"   // Used for converting ints to strings
-  //"time"      // Used for sleep function
-  //"math/rand" // Used for the rand function
-  )
+  "fmt"        // Used for Printing
+  "os"         // Used for opening files
+  "bufio"      // Used to read in a file one string at a time
+  "io/ioutil"  // Used to read in names of files in a directory
+  "strings"    // Used to split a phrase up into seperate words
+)
 
-func how_many_words(c chan [2]int,language string,word string,int_lang int){
 
-    f, _ := os.Open(language)
-    count := 0
-    scanner := bufio.NewScanner(f)
-    scanner.Split(bufio.ScanWords)
-    for scanner.Scan(){
-        line := scanner.Text()
-        if line == word{
-            count++
-        }
-    }
-    if count == 1{
-        fmt.Println("The word",word,"showed up",count,"time in the",language,"dictionary")
-    }
-    if count > 1{
-        fmt.Println("The word",word,"showed up",count,"times in the",language,"dictionary")
-    }
+func how_many_words(c chan [2]int,language string,word string,which_lang int){
 
-    holder := [2]int{count, int_lang}
-    c <- holder
+  count := 0
+  phrase_array := strings.Fields(word)
+  f, _ := os.Open(language)
+  scanner := bufio.NewScanner(f)
+  scanner.Split(bufio.ScanWords)
+  for scanner.Scan(){
+    line := scanner.Text()
+    for i:=0; i < len(phrase_array);i++{
+      if line == phrase_array[i]{
+        count++
+      }
+    }
+  }
+  f.Close()
+
+  holder := [2]int{count, which_lang}
+  c <- holder
 }
 
 func main(){
-    //amer_english := "american-english"
-    //bokmaal := "bokmaal"
-    //brazilian := "brazilian"
-    //brit_english := "brit_english"
-    //bulgarian := "bulgarian"
-    //catala := "catala"
-    c := make(chan [2]int)
-    var all_langs [18]int
-    var langs_string [18]string
-    count := 0
-    files,_ := ioutil.ReadDir("./dictionaries")
-    for _,file := range files {
+  //Channel variable for keeping track of max word count in a dictionary and which dictionary is being used
+  c := make(chan [2]int)
+  //An array to hold all of the dictionary names
 
-        langs_string[count]=file.Name()
-        language := "dictionaries/" + file.Name()
-        //fmt.Println(language)
-        go how_many_words(c,language,"zygote",count)
 
-        count++
-    }
-    fmt.Println(count)
+  var langs_string [18]string
+  //An array to match the string value of the dictionary to an int
+  var all_langs [18]int
+  //A counter to keep track of how many dictionaries we have
+  count := 0
+  //Opens the dictionaries directory
+  files,_ := ioutil.ReadDir("./dictionaries")
+  //Loops through all the files in the dictionary directory
+  for _,file := range files {
 
-    //go how_many_words(c,amer_english,"zygote")
-    for i:=0;i < 18; i++{
-        holder := <-c
-        all_langs[holder[1]] = holder[0]
-    }
-    //a,b,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s := <-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c
+    //Adds the name of all of the files to the array
+    langs_string[count]=file.Name()
+    //Creates the string that will be sent to our function for opening the file
+    language := "dictionaries/" + file.Name()
+    //Calls our function to count the words in that file
+    go how_many_words(c,language,"genbrugsplads",count)
+    //Increment the number of dictionaries we have started searching through
+    count++
+  }
 
-    for j := 0; j < 18; j++{
-        if all_langs[j] > 0{
-            fmt.Println(langs_string[j],"is the winner")
-        }
-    }
 
-    //fmt.Println(x)
-    /*
-    if a != 1{
-        fmt.Println("error in return")
+  //Collects the values returned from our channels, which will be the max count of words in that dictionary
+  for i:=0;i < 18; i++{
+    holder := <-c
+    all_langs[holder[1]] = holder[0]
+  }
+
+  max := 0
+  //Loops through all of the maxes that we recieved and print's out the greatest one
+  for j := 0; j < 18; j++{
+
+    if all_langs[j] > max{
+      max = all_langs[j]
     }
-    if b != 1{
-        fmt.Println("error in return")
+  }
+
+  for i:= 0; i < 18; i++{
+    if all_langs[i] == max{
+
+      fmt.Println(langs_string[i], "is the lnaguage you are looking for")
     }
-    if d != 1{
-        fmt.Println("error in return")
-    }
-    if e != 1{
-        fmt.Println("error in return")
-    }
-    if f != 1{
-        fmt.Println("error in return")
-    }
-    if g != 1{
-        fmt.Println("error in return")
-    }
-    if h != 1{
-        fmt.Println("error in return")
-    }
-    if i != 1{
-        fmt.Println("error in return")
-    }
-    if j != 1{
-        fmt.Println("error in return")
-    }
-    if k != 1{
-        fmt.Println("error in return")
-    }
-    if l != 1{
-        fmt.Println("error in return")
-    }
-    if m != 1{
-        fmt.Println("error in return")
-    }
-    if n != 1{
-        fmt.Println("error in return")
-    }
-    if o != 1{
-        fmt.Println("error in return")
-    }
-    if p != 1{
-        fmt.Println("error in return")
-    }
-    if q != 1{
-        fmt.Println("error in return")
-    }
-    if r != 1{
-        fmt.Println("error in return")
-    }
-    if s != 1{
-        fmt.Println("error in return")
-    }
-    */
+  }
 }
