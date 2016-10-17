@@ -12,7 +12,7 @@ import (
   //"math/rand" // Used for the rand function
   )
 
-func how_many_words(c chan int,which chan string,language string,word string){
+func how_many_words(c chan [2]int,language string,word string,int_lang int){
 
     f, _ := os.Open(language)
     count := 0
@@ -30,8 +30,9 @@ func how_many_words(c chan int,which chan string,language string,word string){
     if count > 1{
         fmt.Println("The word",word,"showed up",count,"times in the",language,"dictionary")
     }
-    c <- count
-    which <- language
+
+    holder := [2]int{count, int_lang}
+    c <- holder
 }
 
 func main(){
@@ -41,8 +42,7 @@ func main(){
     //brit_english := "brit_english"
     //bulgarian := "bulgarian"
     //catala := "catala"
-    c := make(chan int)
-    word := make(chan string)
+    c := make(chan [2]int)
     var all_langs [18]int
     var langs_string [18]string
     count := 0
@@ -52,7 +52,7 @@ func main(){
         langs_string[count]=file.Name()
         language := "dictionaries/" + file.Name()
         //fmt.Println(language)
-        go how_many_words(c,word,language,"zygote")
+        go how_many_words(c,language,"zygote",count)
 
         count++
     }
@@ -60,7 +60,8 @@ func main(){
 
     //go how_many_words(c,amer_english,"zygote")
     for i:=0;i < 18; i++{
-        all_langs[i] = <-c
+        holder := <-c
+        all_langs[holder[1]] = holder[0]
     }
     //a,b,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s := <-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c,<-c
 
