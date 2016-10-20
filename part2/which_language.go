@@ -10,7 +10,6 @@ import (
   "strings"    // Used to split a phrase up into seperate words
 )
 
-
 func how_many_words(c chan [2]int,language string,word string,which_lang int){
 
   count := 0
@@ -53,28 +52,27 @@ func main(){
     //Creates the string that will be sent to our function for opening the file
     language := "dictionaries/" + file.Name()
     //Calls our function to count the words in that file
-    go how_many_words(c,language,"Hey hvorfor er det lige du tror du kender mig A shabi rasi hrakni Så jeg venter bare på du kommer med en kommentar Nogen burde sku bare klap i For der er mange som der misforstår, når vi går Render rundt og tror vi alle bistand får YO hold lige Kan vi ikke få nogle argumenter med noget hold i Så må i heller komme igen med noget bedre For jeg ser det mange steder Læser osse om det når jeg sidder, og tjekker det på tv men jeg gider ikke sige hvad de hedder Og de allerede ved at forberede nye ting Siger det kun fordi jeg kan være det bekendt Og de er allerede ved at forberede syge ting I må heller kom med et bedre argument Og jeg sidder og læser avisen, tænker hvorfor skriver de Nogle ting om og om igen For i denne verden som vi lever i Må vi heller' bare kom igen",count)
+    go how_many_words(c,language,"Sólo tú le das brillo y amor a mi corazón.Sólo tú me miras con tanta pureza y belleza interior.Sólo tú llenas de alegría a mi alma.Sólo tú conoces mis secretos, deseos y anhelos.Sólo tú me transmites calor con tus manos.Sólo tú me das fuerzas para seguir viviendo.Sólo tú me hablas con tanta dulzura.Sólo tú me escuchas con tanta paciencia.Sólo tú me acaricias con tanta delicadeza.Sólo tú me besas con tanta ternura.Sólo tú me comprendes con tanta sutileza.Sólo tú haces que me sienta el ser más feliz del universo.Sólo tú me das tanta seguridad en mí misma.Sólo tú me calmas y tranquilizas cuando estoy mal.Sólo tú eres el que puede entrar en mi corazón y en mi ser.Sólo tú me abrigas cuando tengo frío.Sólo tú eres y serás el dueño de mi corazón.Sólo tú eres mi sueño hecho realidad.Sólo tú eres y serás el que me ama y me amará siempre.Sólo tú eres al que amo y amaré eternamente!",count)
     //Increment the number of dictionaries we have started searching through
     count++
   }
 
-
   //Collects the values returned from our channels, which will be the max count of words in that dictionary
-  for i:=0;i < 18; i++{
+  for i:=0;i < len(files); i++{
     holder := <-c
     all_langs[holder[1]] = holder[0]
   }
 
   max := 0
   //Loops through all of the maxes that we recieved and print's out the greatest one
-  for j := 0; j < 18; j++{
+  for j := 0; j < len(files); j++{
 
     if all_langs[j] > max{
       max = all_langs[j]
     }
   }
 
-  for i:= 0; i < 18; i++{
+  for i:= 0; i < len(files); i++{
     if all_langs[i] == max{
 
       fmt.Println(langs_string[i], "is the language you are looking for")
