@@ -10,10 +10,10 @@ import (
   "strings"    // Used to split a phrase up into seperate words
 )
 
-func how_many_words(c chan [2]int,language string,word string,which_lang int){
+func how_many_words(c chan [2]int,language string,phrase string,which_lang int){
 
   count := 0
-  phrase_array := strings.Fields(word)
+  phrase_array := strings.Fields(phrase)
   f, _ := os.Open(language)
   scanner := bufio.NewScanner(f)
   scanner.Split(bufio.ScanWords)
