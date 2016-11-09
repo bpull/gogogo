@@ -46,6 +46,11 @@ func main(){
   check(error)
 
   phrase_array := strings.Fields(string(phrase))
+  phrase_map := make(map[string]int)
+
+  for i:=0; i<len(phrase_array);i++{
+      phrase_map[phrase_array[i]] = 1
+  }
 
   var langs_string [18]string
   //An array to match the string value of the dictionary to an int
