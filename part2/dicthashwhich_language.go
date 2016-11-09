@@ -5,7 +5,6 @@ package main
 import (
   "fmt"        // Used for Printing
   "os"         // Used for opening files
-  "bufio"      // Used to read in a file one string at a time
   "io/ioutil"  // Used to read in names of files in a directory
   "strings"    // Used to split a phrase up into seperate words
 )
@@ -16,20 +15,25 @@ func check(e error) {
     }
 }
 
-func how_many_words(c chan [2]int,language string,phrase_map map[string]int,which_lang int){
+func how_many_words(c chan [2]int,language string,phrase_array []string,which_lang int){
+
+  lang, error := ioutil.ReadFile(language)
+  check(error)
+
+  lang_array := strings.Fields(string(lang))
+  lang_map := make(map[string]int)
+
+  for i:=0; i<len(lang_array);i++{
+      lang_map[lang_array[i]] = 1
+  }
 
   count := 0
-  f, _ := os.Open(language)
-  scanner := bufio.NewScanner(f)
-  scanner.Split(bufio.ScanWords)
-  for scanner.Scan(){
-    line := scanner.Text()
-    _, exist := phrase_map[line]
+  for i:=0; i<len(phrase_array);i++{
+    _, exist := lang_map[phrase_array[i]]
     if exist == true {
         count++
     }
   }
-  f.Close()
 
   holder := [2]int{count, which_lang}
   c <- holder
@@ -45,11 +49,6 @@ func main(){
   check(error)
 
   phrase_array := strings.Fields(string(phrase))
-  phrase_map := make(map[string]int)
-
-  for i:=0; i<len(phrase_array);i++{
-      phrase_map[phrase_array[i]] = 1
-  }
 
   var langs_string [18]string
   //An array to match the string value of the dictionary to an int
@@ -68,7 +67,7 @@ func main(){
     //Creates the string that will be sent to our function for opening the file
     language := "dictionaries/" + file.Name()
     //Calls our function to count the words in that file
-    go how_many_words(c,language,phrase_map,count)
+    go how_many_words(c,language,phrase_array,count)
     //Increment the number of dictionaries we have started searching through
     count++
   }
