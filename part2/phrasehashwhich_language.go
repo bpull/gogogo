@@ -49,7 +49,7 @@ The main function
 1) It validates that you entered enought arguments on the command line, and that you gave it a valid text file to read
 2) Reads in the file to array, and then sets that array as a hash table for faster lookup times later
 3) Reads in all of the dictionary file names in the dictionary directory
-4) Initializes variables need for the go routines
+4) Initializes variables needed for the go routines
 5) Loops through all of the dictionary names and spawns a thread that will count how many words from your text file is in that dictionary
 6) It will collect all of the returned values from our go routines
 7) It will loop through all of the returned values and print the language that had the highest quality word count returned
